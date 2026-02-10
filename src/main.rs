@@ -1,4 +1,5 @@
 use std::fs;
+use colored::*;
 
 fn main() {
     let paths = fs::read_dir(".").unwrap();
@@ -9,7 +10,7 @@ fn main() {
         let name = entry.file_name();
 
         if metadata.is_dir() {
-            println!("{}/", name.to_string_lossy());
+            println!("{}/", name.to_string_lossy().blue());
         } else {
             println!("{}", name.to_string_lossy());
         }
