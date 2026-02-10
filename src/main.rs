@@ -1,8 +1,18 @@
 use std::fs;
 use colored::*;
+use clap::Parser;
+
+#[derive(Parser)]
+#[command(name = "lsr", about = "ls replacement in Rust")]
+struct Args {
+    #[arg(default_value = ".")]
+    path: String,
+}
 
 fn main() {
-    let paths = fs::read_dir(".").unwrap();
+    let args = Args::parse();
+
+    let paths = fs::read_dir(&args.path).unwrap();
 
     let mut entries: Vec<_> = paths
         .map(|entry| entry.unwrap())
@@ -14,7 +24,6 @@ fn main() {
         let metadata = entry.metadata().unwrap();
         let name = entry.file_name();
         let size = metadata.len();
-
         let size_str = format_size(size);
 
         if metadata.is_dir() {
