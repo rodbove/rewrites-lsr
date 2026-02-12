@@ -7,6 +7,9 @@ use clap::Parser;
 struct Args {
     #[arg(default_value = ".")]
     path: String,
+
+    #[arg(short, long)]
+    all: bool,
 }
 
 fn main() {
@@ -23,6 +26,12 @@ fn main() {
     for entry in entries {
         let metadata = entry.metadata().unwrap();
         let name = entry.file_name();
+        let name_str = name.to_string_lossy();
+
+        if !args.all && name_str.starts_with('.') {
+            continue;
+        }
+
         let size = metadata.len();
         let size_str = format_size(size);
 
