@@ -36,9 +36,9 @@ fn main() {
         let size_str = format_size(size);
 
         if metadata.is_dir() {
-            println!("{:>8}  {}", size_str, format!("{}/", name.to_string_lossy().blue()));
+            println!("{:>8}  {}", size_str, format!("{}/", name_str.blue()));
         } else {
-            println!("{:>8}  {}", size_str, name.to_string_lossy());
+            println!("{:>8}  {}", size_str, name_str);
         }
     }
 
