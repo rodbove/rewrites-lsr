@@ -1,4 +1,5 @@
 use std::fs;
+use std::process;
 use colored::*;
 use clap::Parser;
 
@@ -15,7 +16,13 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    let paths = fs::read_dir(&args.path).unwrap();
+    let paths = match fs::read_dir(&args.path) {
+        Ok(p) => p,
+        Err(e) => {
+            eprintln!("Error reading '{}': {}", args.path, e);
+            process::exit(1);
+        }
+    };
 
     let mut entries: Vec<_> = paths
         .map(|entry| entry.unwrap())
