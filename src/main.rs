@@ -1,4 +1,5 @@
 use std::fs;
+use std::fs::DirEntry;
 use std::process;
 use colored::*;
 use clap::Parser;
@@ -24,20 +25,35 @@ fn main() {
         }
     };
 
-    let mut entries: Vec<_> = paths
-        .map(|entry| entry.unwrap())
+    let mut entries: Vec<DirEntry> = paths
+        .filter_map(|entry| {
+            match entry {
+                Ok(e) => Some(e),
+                Err(error) => {
+                    eprintln!("Warning: {}", error);
+                    None
+                }
+            }
+        })
         .collect();
 
     entries.sort_by_key(|entry| entry.file_name());
 
     for entry in entries {
-        let metadata = entry.metadata().unwrap();
         let name = entry.file_name();
         let name_str = name.to_string_lossy();
 
         if !args.all && name_str.starts_with('.') {
             continue;
         }
+
+        let metadata = match entry.metadata() {
+            Ok(m) => m,
+            Err(e) => {
+                eprintln!("Warning: couldn't read {}: {}", name_str, e);
+                continue;
+            }
+        };
 
         let size = metadata.len();
         let size_str = format_size(size);
